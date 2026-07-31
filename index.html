@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>표정 조합 메이커</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>나만의 표정 만들기</h1>
+        
+        <!-- 이미지가 조합되어 보여질 캔버스 -->
+        <canvas id="faceCanvas" width="400" height="400"></canvas>
+        
+        <div class="controls">
+            <input type="text" id="faceName" placeholder="표정 이름을 지어주세요" oninput="drawFace()">
+            
+            <label>눈썹:</label>
+            <select id="browSelect" onchange="drawFace()">
+                <option value="images/brow_default.png">기본 눈썹</option>
+                <option value="images/brow_sad.png">축 눈썹</option>
+                <option value="images/brow_angry.png">화남 눈썹</option>
+            </select>
+
+            <label>눈:</label>
+            <select id="eyeSelect" onchange="drawFace()">
+                <option value="images/eye_default.png">기본 눈</option>
+                <option value="images/eye_closed.png">눈감음</option>
+                <option value="images/eye_smile.png">웃음 눈</option>
+            </select>
+
+            <label>입:</label>
+            <select id="mouthSelect" onchange="drawFace()">
+                <option value="images/mouth_default.png">다문 입</option>
+                <option value="images/mouth_open.png">오 입</option>
+                <option value="images/mouth_smile.png">웃음 입</option>
+            </select>
+
+            <button onclick="downloadImage()">이미지 저장하기</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
