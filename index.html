@@ -204,24 +204,25 @@
     </div>
 
     <script>
-        // ★ 요청하신 기본 캔버스 외부 이미지 경로 적용 완료 ★
+       // ★ 요청하신 외부 이미지 경로 적용 완료 ★
         const components = {
             base: [
                 { id: 'base1', name: '기본 얼굴', src: 'https://i.ibb.co/YB61NVfh/image.png' } 
             ],
             brow: [
-                { id: 'brow1', name: '기본 눈썹', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,130 Q 150,110 180,130 M 280,130 Q 250,110 220,130" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' },
-                { id: 'brow2', name: '화난 눈썹', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,110 L 180,140 M 280,110 L 220,140" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
+                { id: 'brow1', name: '기본 눈썹', src: 'https://i.ibb.co/twcqdCct/image.png' }
             ],
             eye: [
-                { id: 'eye1', name: '기본 눈', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><circle cx="250" cy="180" r="15" fill="black"/></svg>' },
-                { id: 'eye2', name: '윙크', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><path d="M 230,180 Q 250,160 270,180" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
+                { id: 'eye1', name: '기본 눈', src: 'https://i.ibb.co/nMPwG986/image.png' }
             ],
             mouth: [
-                { id: 'mouth1', name: '웃는 입', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 170,250 Q 200,280 230,250" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' },
-                { id: 'mouth2', name: '벌린 입', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect x="170" y="250" width="60" height="30" rx="10" fill="none" stroke="black" stroke-width="5"/></svg>' }
+                { id: 'mouth1', name: '미소', src: 'https://i.ibb.co/4xvQ8t5/image.png' },
+                { id: 'mouth2', name: '활짝', src: 'https://i.ibb.co/qLfZrJt4/image.png' },
+                { id: 'mouth3', name: '무표정', src: 'https://i.ibb.co/6JtBtztr/image.png' },
+                { id: 'mouth4', name: '씨익', src: 'https://i.ibb.co/ksr3sTmk/image.png' }
             ],
             effect: [
+                // 효과는 기존의 임시 SVG 도형을 남겨두었습니다. 필요시 같은 방식으로 교체하시면 됩니다.
                 { id: 'eff1', name: '홍조', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><ellipse cx="120" cy="210" rx="30" ry="15" fill="red"/><ellipse cx="280" cy="210" rx="30" ry="15" fill="red"/></svg>' },
                 { id: 'eff2', name: '음영', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,80 L 120,150 M 140,70 L 140,160 M 160,80 L 160,150" stroke="blue" stroke-width="4"/></svg>' }
             ]
