@@ -2,509 +2,360 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>표정 조합 메이커</title>
+    <title>표정 조합 메이커 Pro + 백업/미리보기</title>
     <style>
-        /* === 기본 스타일 === */
-        body {
-            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .main-container {
-            display: flex;
-            gap: 40px;
-            max-width: 1200px;
-            width: 100%;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-
-        /* === 왼쪽 패널 (선택 영역) === */
-        .left-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .category {
-            background: #fafafa;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .category-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        /* 가로 스크롤 영역 */
-        .scroll-area {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-
-        /* 스크롤바 디자인 */
-        .scroll-area::-webkit-scrollbar {
-            height: 10px;
-        }
-        .scroll-area::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 5px;
-        }
-        .scroll-area::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 5px;
-        }
-        .scroll-area::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        /* 선택 아이템 (썸네일) */
-        .item-btn {
-            flex: 0 0 80px;
-            height: 80px;
-            background-color: #fff;
-            border: 3px solid #ddd;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            padding: 5px;
-        }
-
-        .item-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .item-btn:hover {
-            border-color: #aaa;
-        }
-
-        .item-btn.active {
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0,123,255,0.4);
-        }
-
-        /* === 오른쪽 패널 (미리보기 및 목록 영역) === */
-        .right-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        /* 상단: 최종 표정 미리보기 */
-        .preview-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 2px solid #333;
-            border-radius: 15px;
-            padding: 20px;
-            background-color: #fff;
-        }
-
-        .preview-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        #previewCanvas {
-            width: 250px;
-            height: 250px;
-            border: 1px dashed #ccc;
-            background-color: #fff;
-            margin-bottom: 20px;
-        }
-
-        .add-btn {
-            background-color: #fff;
-            border: 3px solid #333;
-            color: #333;
-            font-size: 20px;
-            font-weight: bold;
-            padding: 10px 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .add-btn:hover {
-            background-color: #333;
-            color: #fff;
-        }
-
-        /* 하단: 수집된 표정 목록 및 저장 */
-        .collection-section {
-            border: 2px solid #ccc;
-            border-radius: 15px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            background-color: #fafafa;
-            flex-grow: 1;
-        }
-
-        .collection-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .collection-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        .collection-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .collection-item input {
-            width: 90%;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px;
-            font-family: inherit;
-        }
-
-        /* 최종 저장 버튼 */
-        .save-btn {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: auto;
-            transition: background-color 0.2s;
-        }
-
-        .save-btn:hover {
-            background-color: #0056b3;
-        }
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
         
-        .delete-btn {
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 2px 5px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-bottom: 5px;
-            align-self: flex-end;
-        }
+        /* 왼쪽 패널: 선택 영역 */
+        .left-panel { flex: 1; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow-y: auto; }
+        
+        /* 오른쪽 패널: 미리보기 및 리스트 */
+        .right-panel { width: 380px; display: flex; flex-direction: column; gap: 15px; }
+        .preview-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; }
+        .saved-list-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        .category { margin-bottom: 25px; }
+        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .category-title { font-weight: bold; font-size: 1.1em; color: #333; }
+        
+        /* 옵션 컨트롤 */
+        .options { display: flex; align-items: center; gap: 15px; font-size: 0.9em; color: #555; }
+        .options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .options input[type="range"] { width: 80px; }
+        
+        /* 가로 스크롤 영역 */
+        .scroll-area { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+        .scroll-area::-webkit-scrollbar { height: 8px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        
+        /* 아이템 버튼 */
+        .item { width: 70px; height: 70px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background: #fafafa; transition: 0.2s; }
+        .item:hover { border-color: #bbb; }
+        .item.active { border-color: #4CAF50; background: #e8f5e9; }
+        .item img { max-width: 90%; max-height: 90%; pointer-events: none; }
+
+        canvas { border: 1px solid #ddd; border-radius: 8px; background: #fff; width: 100%; max-width: 300px; margin-bottom: 15px; }
+        
+        /* 버튼 스타일 */
+        .btn { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; }
+        .btn:hover { background: #45a049; }
+        .btn.primary { background: #4A90E2; margin-top: auto; }
+        .btn.primary:hover { background: #357ABD; }
+        .btn.secondary { background: #757575; font-size: 13px; padding: 8px; }
+        .btn.secondary:hover { background: #616161; }
+        
+        /* 저장된 목록 아이템 */
+        .saved-item { display: flex; gap: 10px; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
+        .saved-item img { width: 60px; height: 60px; border: 1px solid #ddd; border-radius: 4px; background: #fff;}
+        .saved-item-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .saved-item-info input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        
+        .delete-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 6px; cursor: pointer; font-size: 12px; }
+        .delete-btn:hover { background: #e04343; }
+
+        .backup-controls { display: flex; gap: 10px; margin-bottom: 10px; }
+
+        /* 미리보기 모달창 스타일 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; max-width: 90%; max-height: 90%; overflow-y: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-content img { max-width: 100%; border: 1px solid #ddd; margin-bottom: 20px; border-radius: 8px; }
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; }
+        .modal-buttons .btn { width: 150px; }
     </style>
 </head>
 <body>
+    <div class="left-panel" id="ui-container">
+        <!-- 카테고리 UI가 자바스크립트를 통해 이곳에 생성됨 -->
+    </div>
 
-    <div class="main-container">
-        <!-- 왼쪽 패널: 파츠 선택 -->
-        <div class="left-panel" id="categoryContainer">
-            <!-- 자바스크립트로 카테고리 HTML이 생성됩니다 -->
+    <div class="right-panel">
+        <div class="preview-box">
+            <canvas id="faceCanvas" width="400" height="400"></canvas>
+            <button class="btn" onclick="addToList()">+ 이 표정 추가하기</button>
         </div>
-
-        <!-- 오른쪽 패널: 결과물 및 리스트 -->
-        <div class="right-panel">
+        
+        <div class="saved-list-box">
+            <h3 style="margin-top:0; margin-bottom: 5px; font-size: 1.1em;">추가된 표정들</h3>
             
-            <!-- 상단: 최종 표정 -->
-            <div class="preview-section">
-                <div class="preview-title">최종 표정</div>
-                <canvas id="previewCanvas" width="400" height="400"></canvas>
-                <button class="add-btn" onclick="addToCollection()">추가</button>
+            <!-- 백업 기능 버튼 -->
+            <div class="backup-controls">
+                <button class="btn secondary" onclick="exportBackup()">💾 백업 저장 (JSON)</button>
+                <button class="btn secondary" onclick="document.getElementById('file-upload').click()">📂 백업 불러오기</button>
+                <input type="file" id="file-upload" accept=".json" style="display:none;" onchange="importBackup(event)">
             </div>
 
-            <!-- 하단: 추가된 표정 목록 -->
-            <div class="collection-section">
-                <div class="collection-grid" id="collectionGrid">
-                    <!-- 추가된 표정들이 여기에 들어갑니다 -->
-                </div>
-                <button class="save-btn" onclick="saveCombinedImage()">하나의 이미지로 저장</button>
+            <div id="saved-list" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+                <!-- 추가된 표정 목록이 들어갈 곳 -->
             </div>
+            
+            <button class="btn primary" onclick="previewFinalImage()">최종 완성본 미리보기 (5열)</button>
+        </div>
+    </div>
 
+    <!-- 미리보기 모달창 -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-content">
+            <h2>최종 병합 이미지 미리보기</h2>
+            <img id="finalPreviewImg" src="" alt="최종 이미지 미리보기">
+            <div class="modal-buttons">
+                <button class="btn" style="background: #9e9e9e;" onclick="closeModal()">취소</button>
+                <button class="btn primary" onclick="downloadFromPreview()">이미지 다운로드</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // 1. 임시 이미지 데이터 준비 (테스트용 Base64 SVG)
-        // 실제 사용 시 'src' 값을 "images/눈썹1.png" 처럼 바꿔주세요.
-        // ==========================================
-        const svgBase = (content) => `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">${content}</svg>`;
-        
-        // 얼굴 윤곽선 (기본 베이스)
-        const baseFaceSrc = svgBase(`<circle cx="100" cy="100" r="90" fill="white" stroke="black" stroke-width="4"/>`);
-
+        // ★★★ 이미지 소스 설정 부분 ★★★
         const components = {
-            eyebrows: [
-                { id: 'b1', name: '기본', src: svgBase(`<path d="M50 70 Q 70 60 90 70 M110 70 Q 130 60 150 70" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) },
-                { id: 'b2', name: '축', src: svgBase(`<path d="M50 60 Q 70 70 90 80 M110 80 Q 130 70 150 60" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) },
-                { id: 'b3', name: '화남', src: svgBase(`<path d="M50 80 Q 70 70 90 60 M110 60 Q 130 70 150 80" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) }
+            base: [
+                // 첨부해주신 "기본.png"를 기본 베이스로 설정했습니다.
+                { id: 'base1', name: '기본 얼굴', src: '기본.png' } 
             ],
-            eyes: [
-                { id: 'e1', name: '기본', src: svgBase(`<circle cx="65" cy="100" r="10" fill="black"/><circle cx="135" cy="100" r="10" fill="black"/>`) },
-                { id: 'e2', name: '눈감', src: svgBase(`<path d="M50 100 Q 65 115 80 100 M120 100 Q 135 115 150 100" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) },
-                { id: 'e3', name: '웃음', src: svgBase(`<path d="M50 100 Q 65 85 80 100 M120 100 Q 135 85 150 100" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) }
+            brow: [
+                // 아래처럼 눈썹 파일명들도 '기본눈썹.png', '화난눈썹.png' 등으로 바꿔주시면 됩니다!
+                { id: 'brow1', name: '기본 눈썹', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,130 Q 150,110 180,130 M 280,130 Q 250,110 220,130" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' },
+                { id: 'brow2', name: '화난 눈썹', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,110 L 180,140 M 280,110 L 220,140" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
             ],
-            mouths: [
-                { id: 'm1', name: '다문', src: svgBase(`<path d="M85 140 L115 140" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) },
-                { id: 'm2', name: '웃음', src: svgBase(`<path d="M80 140 Q 100 160 120 140" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>`) },
-                { id: 'm3', name: '와악', src: svgBase(`<path d="M80 140 Q 100 170 120 140 Z" fill="white" stroke="black" stroke-width="4"/>`) }
+            eye: [
+                { id: 'eye1', name: '기본 눈', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><circle cx="250" cy="180" r="15" fill="black"/></svg>' },
+                { id: 'eye2', name: '윙크 (비대칭)', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><path d="M 230,180 Q 250,160 270,180" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
             ],
-            effects: [
-                { id: 'ef0', name: '없음', src: svgBase(``) },
-                { id: 'ef1', name: '홍조', src: svgBase(`<ellipse cx="50" cy="115" rx="15" ry="8" fill="pink" opacity="0.8"/><ellipse cx="150" cy="115" rx="15" ry="8" fill="pink" opacity="0.8"/>`) },
-                { id: 'ef2', name: '땀', src: svgBase(`<circle cx="160" cy="60" r="8" fill="skyblue"/><path d="M152 60 L160 45 L168 60 Z" fill="skyblue"/>`) }
+            mouth: [
+                { id: 'mouth1', name: '웃는 입', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 170,250 Q 200,280 230,250" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' },
+                { id: 'mouth2', name: '벌린 입', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect x="170" y="250" width="60" height="30" rx="10" fill="none" stroke="black" stroke-width="5"/></svg>' }
+            ],
+            effect: [
+                { id: 'eff1', name: '홍조', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><ellipse cx="120" cy="210" rx="30" ry="15" fill="red"/><ellipse cx="280" cy="210" rx="30" ry="15" fill="red"/></svg>' },
+                { id: 'eff2', name: '음영', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,80 L 120,150 M 140,70 L 140,160 M 160,80 L 160,150" stroke="blue" stroke-width="4"/></svg>' },
+                { id: 'eff3', name: '땀방울', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 300,120 Q 310,140 300,160 Q 290,140 300,120" fill="cyan"/></svg>' }
             ]
         };
 
-        // ==========================================
-        // 2. 상태 관리 (현재 선택된 파츠 및 추가된 목록)
-        // ==========================================
-        let currentSelection = {
-            eyebrows: components.eyebrows[0],
-            eyes: components.eyes[0],
-            mouths: components.mouths[0],
-            effects: components.effects[0]
+        const state = {
+            base: { id: 'base1', flip: false, opacity: 1 },
+            brow: { id: 'brow1', flip: false, opacity: 1 },
+            eye:  { id: 'eye1', flip: false, opacity: 1 },
+            mouth: { id: 'mouth1', flip: false, opacity: 1 },
+            effect: { ids: [], flip: false, opacity: 0.5 }
         };
 
-        let savedFaces = []; // { id, dataURL, name }
-
-        const canvas = document.getElementById('previewCanvas');
+        const loadedImages = {};
+        let savedFaces = [];
+        let finalImageURL = ''; // 미리보기용 전역 변수
+        const canvas = document.getElementById('faceCanvas');
         const ctx = canvas.getContext('2d');
+        const categoryNames = { brow: '눈썹', eye: '눈', mouth: '입', effect: '효과 및 음영' };
 
-        // ==========================================
-        // 3. UI 렌더링 및 인터랙션 로직
-        // ==========================================
-
-        // 왼쪽 패널(카테고리 메뉴) 그리기
-        function initUI() {
-            const container = document.getElementById('categoryContainer');
-            const categories = [
-                { key: 'eyebrows', label: '눈썹' },
-                { key: 'eyes', label: '눈' },
-                { key: 'mouths', label: '입' },
-                { key: 'effects', label: '효과' }
-            ];
-
-            categories.forEach(cat => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'category';
-                
-                const title = document.createElement('div');
-                title.className = 'category-title';
-                title.innerText = cat.label;
-                
-                const scrollArea = document.createElement('div');
-                scrollArea.className = 'scroll-area';
-                scrollArea.id = `scroll-${cat.key}`;
-
-                components[cat.key].forEach(item => {
-                    const btn = document.createElement('div');
-                    btn.className = 'item-btn';
-                    if (currentSelection[cat.key].id === item.id) btn.classList.add('active');
-                    
-                    const img = document.createElement('img');
-                    img.src = item.src;
-                    img.alt = item.name;
-                    
-                    btn.appendChild(img);
-                    btn.onclick = () => selectPart(cat.key, item, btn);
-                    scrollArea.appendChild(btn);
+        // 1. 이미지 미리 로드
+        async function preloadImages() {
+            const promises = [];
+            for (const cat in components) {
+                components[cat].forEach(item => {
+                    promises.push(new Promise(resolve => {
+                        const img = new Image();
+                        img.onload = () => { loadedImages[item.id] = img; resolve(); };
+                        img.onerror = () => { console.warn(`이미지를 불러올 수 없습니다: ${item.src}`); resolve(); }; // 오류 방지용
+                        img.src = item.src;
+                    }));
                 });
+            }
+            await Promise.all(promises);
+            renderUI();
+            drawFace();
+        }
 
-                categoryDiv.appendChild(title);
-                categoryDiv.appendChild(scrollArea);
-                container.appendChild(categoryDiv);
+        // 2. UI 동적 생성
+        function renderUI() {
+            const container = document.getElementById('ui-container');
+            container.innerHTML = ''; 
+
+            ['brow', 'eye', 'mouth', 'effect'].forEach(cat => {
+                const section = document.createElement('div');
+                section.className = 'category';
+                
+                let optionsHTML = `<label><input type="checkbox" onchange="toggleFlip('${cat}', this.checked)"> 좌우 반전</label>`;
+                if (cat === 'effect') {
+                    optionsHTML += `<label style="margin-left: 10px;">투명도: <input type="range" min="0.1" max="1.0" step="0.1" value="${state.effect.opacity}" oninput="changeOpacity('${cat}', this.value)"></label>`;
+                }
+
+                let itemsHTML = components[cat].map(item => {
+                    const isActive = cat === 'effect' ? state.effect.ids.includes(item.id) : state[cat].id === item.id;
+                    return `
+                        <div class="item ${isActive ? 'active' : ''}" onclick="selectItem('${cat}', '${item.id}')" title="${item.name}">
+                            <img src="${item.src}">
+                        </div>
+                    `;
+                }).join('');
+
+                section.innerHTML = `
+                    <div class="category-header">
+                        <div class="category-title">${categoryNames[cat]}</div>
+                        <div class="options">${optionsHTML}</div>
+                    </div>
+                    <div class="scroll-area">${itemsHTML}</div>
+                `;
+                container.appendChild(section);
             });
         }
 
-        // 파츠 선택 시 실행
-        function selectPart(category, item, btnElement) {
-            currentSelection[category] = item;
-            
-            // 기존 active 클래스 제거
-            const parent = document.getElementById(`scroll-${category}`);
-            const buttons = parent.getElementsByClassName('item-btn');
-            for(let b of buttons) b.classList.remove('active');
-            
-            // 선택된 버튼 active 추가
-            btnElement.classList.add('active');
-            
-            // 캔버스 업데이트
-            updatePreview();
+        function selectItem(category, id) {
+            if (category === 'effect') {
+                const idx = state.effect.ids.indexOf(id);
+                if (idx > -1) state.effect.ids.splice(idx, 1);
+                else state.effect.ids.push(id);
+            } else {
+                state[category].id = id;
+            }
+            renderUI();
+            drawFace();
         }
 
-        // 이미지 로딩을 위한 헬퍼 함수
-        function loadImage(src) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = "Anonymous"; // CORS 문제 방지
-                img.onload = () => resolve(img);
-                img.src = src;
-            });
-        }
+        function toggleFlip(category, isFlipped) { state[category].flip = isFlipped; drawFace(); }
+        function changeOpacity(category, val) { state[category].opacity = parseFloat(val); drawFace(); }
 
-        // 현재 선택된 파츠들로 캔버스 조합
-        async function updatePreview() {
+        // 3. 캔버스 그리기
+        function drawFace() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 베이스 및 파츠 이미지 로드
-            const baseImg = await loadImage(baseFaceSrc);
-            const browImg = await loadImage(currentSelection.eyebrows.src);
-            const eyeImg = await loadImage(currentSelection.eyes.src);
-            const mouthImg = await loadImage(currentSelection.mouths.src);
-            const effectImg = await loadImage(currentSelection.effects.src);
-
-            // 순서대로 그리기 (효과 -> 눈썹 -> 눈 -> 입)
-            ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(effectImg, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(browImg, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(eyeImg, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(mouthImg, 0, 0, canvas.width, canvas.height);
+            drawPart('base', state.base.id, state.base.flip, state.base.opacity);
+            state.effect.ids.forEach(id => drawPart('effect', id, state.effect.flip, state.effect.opacity));
+            drawPart('mouth', state.mouth.id, state.mouth.flip, state.mouth.opacity);
+            drawPart('eye', state.eye.id, state.eye.flip, state.eye.opacity);
+            drawPart('brow', state.brow.id, state.brow.flip, state.brow.opacity);
         }
 
-        // [추가] 버튼 클릭 시 하단 목록에 저장
-        function addToCollection() {
+        function drawPart(category, id, flip, opacity) {
+            if (!id || !loadedImages[id]) return;
+            ctx.save();
+            ctx.globalAlpha = opacity;
+            if (flip) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+            ctx.drawImage(loadedImages[id], 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
+
+        // 4. 리스트 추가/삭제/렌더링
+        function addToList() {
             const dataURL = canvas.toDataURL('image/png');
-            const faceId = Date.now();
-            savedFaces.push({
-                id: faceId,
-                dataURL: dataURL,
-                name: `표정 ${savedFaces.length + 1}`
-            });
-            renderCollection();
+            savedFaces.push({ id: Date.now(), dataURL: dataURL, name: `표정 ${savedFaces.length + 1}` });
+            renderSavedList();
         }
 
-        // 하단 목록 UI 업데이트
-        function renderCollection() {
-            const grid = document.getElementById('collectionGrid');
-            grid.innerHTML = ''; // 초기화
+        function deleteFromList(id) {
+            savedFaces = savedFaces.filter(face => face.id !== id);
+            renderSavedList();
+        }
+
+        function updateName(id, newName) {
+            const faceIndex = savedFaces.findIndex(f => f.id === id);
+            if (faceIndex > -1) savedFaces[faceIndex].name = newName;
+        }
+
+        function renderSavedList() {
+            const listDiv = document.getElementById('saved-list');
+            listDiv.innerHTML = savedFaces.map(face => `
+                <div class="saved-item">
+                    <img src="${face.dataURL}">
+                    <div class="saved-item-info">
+                        <input type="text" value="${face.name}" placeholder="이름 입력" onchange="updateName(${face.id}, this.value)">
+                        <button class="delete-btn" onclick="deleteFromList(${face.id})">삭제</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 5. 백업 기능 (JSON Export / Import)
+        function exportBackup() {
+            if (savedFaces.length === 0) return alert("백업할 표정이 없습니다.");
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedFaces));
+            const link = document.createElement('a');
+            link.setAttribute("href", dataStr);
+            link.setAttribute("download", "표정_백업.json");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        savedFaces = importedData;
+                        renderSavedList();
+                        alert('백업 데이터를 성공적으로 불러왔습니다!');
+                    } else { throw new Error('Invalid format'); }
+                } catch (err) { alert('잘못된 백업 파일입니다.'); }
+                event.target.value = ''; // 파일 인풋 초기화
+            };
+            reader.readAsText(file);
+        }
+
+        // 6. 최종 이미지 미리보기 및 다운로드
+        function previewFinalImage() {
+            if (savedFaces.length === 0) return alert("추가된 표정이 없습니다.");
+
+            const itemsPerRow = 5; 
+            const cols = Math.min(savedFaces.length, itemsPerRow);
+            const rows = Math.ceil(savedFaces.length / itemsPerRow);
+
+            const margin = 20;
+            const faceSize = 300; 
+            const textHeight = 50;
+            
+            const cellWidth = faceSize + margin * 2;
+            const cellHeight = faceSize + textHeight + margin * 2;
+
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = cols * cellWidth;
+            offCanvas.height = rows * cellHeight;
+            const oCtx = offCanvas.getContext('2d');
+
+            oCtx.fillStyle = '#ffffff';
+            oCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
+
+            let drawnCount = 0;
 
             savedFaces.forEach((face, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'collection-item';
+                const col = index % itemsPerRow;
+                const row = Math.floor(index / itemsPerRow);
+                const x = col * cellWidth + margin;
+                const y = row * cellHeight + margin;
 
-                // 삭제 버튼
-                const delBtn = document.createElement('button');
-                delBtn.className = 'delete-btn';
-                delBtn.innerText = 'X';
-                delBtn.onclick = () => {
-                    savedFaces.splice(index, 1);
-                    renderCollection();
-                };
-
-                const img = document.createElement('img');
+                const img = new Image();
                 img.src = face.dataURL;
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = face.name;
-                input.onchange = (e) => { face.name = e.target.value; }; // 이름 변경 시 객체 업데이트
-
-                itemDiv.appendChild(delBtn);
-                itemDiv.appendChild(img);
-                itemDiv.appendChild(input);
-                grid.appendChild(itemDiv);
+                img.onload = () => {
+                    oCtx.drawImage(img, x, y, faceSize, faceSize);
+                    
+                    oCtx.fillStyle = '#000000';
+                    oCtx.font = 'bold 24px "Malgun Gothic"';
+                    oCtx.textAlign = 'center';
+                    oCtx.fillText(face.name, x + faceSize / 2, y + faceSize + 35);
+                    
+                    drawnCount++;
+                    if (drawnCount === savedFaces.length) {
+                        finalImageURL = offCanvas.toDataURL('image/png');
+                        document.getElementById('finalPreviewImg').src = finalImageURL;
+                        document.getElementById('previewModal').style.display = 'flex';
+                    }
+                };
             });
         }
 
-        // ==========================================
-        // 4. 모인 표정들을 하나의 커다란 이미지로 병합 및 저장
-        // ==========================================
-        async function saveCombinedImage() {
-            if (savedFaces.length === 0) {
-                alert("먼저 표정을 1개 이상 추가해주세요!");
-                return;
-            }
-
-            // 배치 설정 (한 줄에 4개씩)
-            const cols = Math.min(savedFaces.length, 4);
-            const rows = Math.ceil(savedFaces.length / cols);
-            
-            // 각 썸네일 크기 및 여백
-            const cellWidth = 300;
-            const cellHeight = 350; // 이미지 300 + 텍스트 공간 50
-            const padding = 40; // 전체 여백
-            const gap = 20; // 썸네일 사이 여백
-
-            // 최종 캔버스 크기 계산
-            const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = (cols * cellWidth) + ((cols - 1) * gap) + (padding * 2);
-            finalCanvas.height = (rows * cellHeight) + ((rows - 1) * gap) + (padding * 2);
-            const fCtx = finalCanvas.getContext('2d');
-
-            // 배경을 흰색으로 채우기 (투명 방지)
-            fCtx.fillStyle = '#ffffff';
-            fCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-            // 각 표정 순회하며 그리기
-            for (let i = 0; i < savedFaces.length; i++) {
-                const face = savedFaces[i];
-                const img = await loadImage(face.dataURL);
-
-                const colIdx = i % cols;
-                const rowIdx = Math.floor(i / cols);
-
-                const x = padding + (colIdx * (cellWidth + gap));
-                const y = padding + (rowIdx * (cellHeight + gap));
-
-                // 표정 이미지 그리기 (300x300)
-                fCtx.drawImage(img, x, y, cellWidth, cellWidth);
-
-                // 이름 텍스트 그리기 (이미지 아래 가운데 정렬)
-                fCtx.fillStyle = '#000000';
-                fCtx.font = 'bold 24px "Malgun Gothic", sans-serif';
-                fCtx.textAlign = 'center';
-                fCtx.fillText(face.name, x + (cellWidth / 2), y + cellWidth + 30);
-            }
-
-            // 다운로드 트리거
-            const link = document.createElement('a');
-            link.download = '나의_표정_모음.png';
-            link.href = finalCanvas.toDataURL('image/png');
-            link.click();
+        function closeModal() {
+            document.getElementById('previewModal').style.display = 'none';
         }
 
-        // 초기화 실행
-        initUI();
-        updatePreview();
+        function downloadFromPreview() {
+            const link = document.createElement('a');
+            link.download = '표정_모음집.png';
+            link.href = finalImageURL;
+            link.click();
+            closeModal();
+        }
 
+        preloadImages();
     </script>
 </body>
 </html>
