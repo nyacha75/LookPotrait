@@ -2,13 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>표정 조합 메이커 Pro (White & Blue)</title>
+    <title>표정 모음집 만들기</title>
     <style>
         /* 기본 스타일 설정 (하양 & 파랑 테마) */
         :root {
-            --bg-color: #f0f4f8; /* 아주 밝은 파스텔 블루/그레이 배경 */
-            --panel-bg: #ffffff; /* 패널 배경 하양 */
-            --primary-blue: #1a73e8; /* 메인 파랑 */
+            --bg-color: #f0f4f8; 
+            --panel-bg: #ffffff; 
+            --primary-blue: #1a73e8; 
             --primary-hover: #1557b0;
             --border-color: #dce1e6;
             --text-main: #333333;
@@ -22,9 +22,27 @@
             margin: 0; 
             padding: 20px; 
             display: flex; 
-            gap: 20px; 
+            flex-direction: column;
+            gap: 15px; 
             height: 100vh; 
             box-sizing: border-box; 
+        }
+
+        /* 최상단 페이지 제목 */
+        .page-title {
+            margin: 0;
+            font-size: 26px;
+            color: var(--primary-blue);
+            font-weight: bold;
+            padding-left: 5px;
+        }
+
+        /* 메인 레이아웃 컨테이너 */
+        .layout-container {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0; 
         }
 
         /* 패널 공통 스타일 */
@@ -42,7 +60,8 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            max-width: 600px;
+            max-width: 650px; 
+            min-height: 0;
         }
 
         .canvas-container {
@@ -50,6 +69,7 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
+            flex-shrink: 0;
         }
 
         canvas {
@@ -97,14 +117,17 @@
         /* 카테고리UI 스타일 */
         .category { margin-bottom: 25px; }
         .category-header { 
-            display: flex; justify-content: space-between; align-items: center; 
+            display: flex; flex-direction: column; gap: 10px;
             margin-bottom: 12px; border-bottom: 2px solid var(--bg-color); padding-bottom: 8px; 
         }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
         .category-title { font-weight: bold; font-size: 1.1em; color: var(--primary-blue); }
         
-        .options { display: flex; align-items: center; gap: 15px; font-size: 0.9em; color: var(--text-sub); }
-        .options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .options input[type="range"] { width: 80px; accent-color: var(--primary-blue); }
+        .options { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 0.85em; color: var(--text-sub); }
+        .options label { display: flex; align-items: center; gap: 5px; cursor: pointer; background: #f8f9fa; padding: 4px 8px; border-radius: 4px; border: 1px solid #eee; }
+        
+        input[type="range"] { width: 70px; accent-color: var(--primary-blue); }
+        input[type="checkbox"] { accent-color: var(--primary-blue); }
 
         .scroll-area { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
         .scroll-area::-webkit-scrollbar { height: 6px; }
@@ -120,9 +143,9 @@
         .item.active { border-color: var(--primary-blue); background: #f4f8fe; }
         .item img { max-width: 90%; max-height: 90%; pointer-events: none; }
 
-        /* 저장된 리스트 영역 */
+        /* 저장된 리스트 영역 (5열 그리드) */
         .saved-list-container {
-            display: flex; flex-direction: column; flex: 1; min-height: 300px;
+            display: flex; flex-direction: column; flex: 1; min-height: 200px;
         }
         .saved-header {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
@@ -130,20 +153,55 @@
         .saved-header h3 { margin: 0; color: var(--primary-blue); }
         .backup-controls { display: flex; gap: 8px; }
         
-        .saved-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .saved-list { 
+            flex: 1; 
+            overflow-y: auto; 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 12px; 
+            padding-right: 5px;
+            align-content: start;
+        }
         
         .saved-item { 
-            display: flex; gap: 12px; align-items: center; 
-            background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); 
+            display: flex; flex-direction: column; align-items: center; gap: 8px; 
+            background: #fff; padding: 10px; border-radius: 8px; border: 2px solid var(--border-color); 
+            cursor: grab; transition: 0.2s; position: relative;
         }
-        .saved-item img { width: 60px; height: 60px; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; object-fit: contain;}
-        .saved-item-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .saved-item-info input { 
-            padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline-color: var(--primary-blue);
+        .saved-item:active { cursor: grabbing; }
+
+        /* 드래그 앤 드롭 애니메이션 효과 */
+        .saved-item.dragging {
+            opacity: 0.4;
+            border: 2px dashed #aaa;
         }
+        .saved-item.drag-over {
+            border-color: var(--primary-blue);
+            background: #e8f0fe;
+            transform: scale(1.03);
+        }
+
+        /* 클릭(선택) 되었을 때 파란 테두리 */
+        .saved-item.selected {
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.15);
+        }
+
+        .saved-item img { width: 100%; height: auto; max-width: 80px; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; object-fit: contain; pointer-events: none;}
         
-        .action-buttons { display: flex; gap: 6px; }
-        .action-btn { flex: 1; border: none; border-radius: 4px; padding: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .saved-item-info { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+        .saved-item-info input { 
+            width: 100%; box-sizing: border-box; padding: 4px; border: 1px solid transparent; border-radius: 4px; 
+            font-size: 12px; text-align: center; color: var(--text-main); font-weight: bold; background: transparent; transition: 0.2s;
+        }
+        .saved-item-info input:focus { border: 1px solid var(--primary-blue); outline: none; background: #fff;}
+        
+        /* 버튼 영역 평소엔 숨김 */
+        .action-buttons { display: none; flex-direction: column; gap: 4px; width: 100%; }
+        /* 아이템이 선택되었을 때만 버튼 보이기 */
+        .saved-item.selected .action-buttons { display: flex; }
+
+        .action-btn { width: 100%; border: none; border-radius: 4px; padding: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .action-btn.edit-btn { background: #e3f2fd; color: #0d47a1; }
         .action-btn.edit-btn:hover { background: #bbdefb; }
         .action-btn.dup-btn { background: #f3e5f5; color: #4a148c; }
@@ -161,34 +219,40 @@
 </head>
 <body>
 
-    <!-- 메인 영역 (캔버스 및 저장 리스트) -->
-    <div class="main-area">
-        <div class="panel canvas-container">
-            <canvas id="faceCanvas" width="400" height="400"></canvas>
-            <button class="btn btn-primary" onclick="addToList()">+ 이 표정 새로 추가하기</button>
-        </div>
-        
-        <div class="panel saved-list-container">
-            <div class="saved-header">
-                <h3>추가된 표정들</h3>
-                <div class="backup-controls">
-                    <button class="btn btn-outline" onclick="exportBackup()">💾 백업</button>
-                    <button class="btn btn-outline" onclick="document.getElementById('file-upload').click()">📂 열기</button>
-                    <input type="file" id="file-upload" accept=".json" style="display:none;" onchange="importBackup(event)">
-                </div>
-            </div>
-            
-            <div id="saved-list" class="saved-list">
-                <!-- 리스트 출력 영역 -->
-            </div>
-            
-            <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 완성본 미리보기 (5열)</button>
-        </div>
-    </div>
+    <!-- 최상단 제목 -->
+    <h1 class="page-title">표정 모음집 만들기</h1>
 
-    <!-- 우측 도구 패널 영역 -->
-    <div class="panel tools-sidebar" id="ui-container">
-        <!-- 자바스크립트로 렌더링됨 -->
+    <!-- 뼈대가 되는 가로 레이아웃 -->
+    <div class="layout-container">
+        <!-- 메인 영역 (캔버스 및 저장 리스트) -->
+        <div class="main-area">
+            <div class="panel canvas-container">
+                <canvas id="faceCanvas" width="400" height="400"></canvas>
+                <button class="btn btn-primary" onclick="addToList()">+ 이 표정 새로 추가하기</button>
+            </div>
+            
+            <div class="panel saved-list-container">
+                <div class="saved-header">
+                    <h3>추가된 표정들</h3>
+                    <div class="backup-controls">
+                        <button class="btn btn-outline" onclick="exportBackup()">💾 백업</button>
+                        <button class="btn btn-outline" onclick="document.getElementById('file-upload').click()">📂 열기</button>
+                        <input type="file" id="file-upload" accept=".json" style="display:none;" onchange="importBackup(event)">
+                    </div>
+                </div>
+                
+                <div id="saved-list" class="saved-list">
+                    <!-- 리스트 출력 영역 -->
+                </div>
+                
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 완성본 미리보기 (5열)</button>
+            </div>
+        </div>
+
+        <!-- 우측 도구 패널 영역 -->
+        <div class="panel tools-sidebar" id="ui-container">
+            <!-- 자바스크립트로 렌더링됨 -->
+        </div>
     </div>
 
     <!-- 미리보기 모달창 -->
@@ -204,7 +268,6 @@
     </div>
 
     <script>
-       // ★ 요청하신 외부 이미지 경로 적용 완료 ★
         const components = {
             base: [
                 { id: 'base1', name: '기본 얼굴', src: 'https://i.ibb.co/YB61NVfh/image.png' } 
@@ -232,7 +295,6 @@
                 { id: 'eye11', name: '꺄아', src: 'https://i.ibb.co/RkBYncnP/image.png' },
                 { id: 'eye12', name: '콩눈', src: 'https://i.ibb.co/n87Fv1Sb/image.png' },
                 { id: 'eye13', name: '텅빈콩눈', src: 'https://i.ibb.co/Mx3gwCzr/image.png' }
-
             ],
             mouth: [
                 { id: 'mouth1', name: '미소', src: 'https://i.ibb.co/4xvQ8t5/image.png' },
@@ -273,10 +335,12 @@
                 { id: 'eff10', name: '눈물', src: 'https://i.ibb.co/FLGm1nwp/image.png' },
                 { id: 'eff11', name: '눈물많이', src: 'https://i.ibb.co/wFqJV9kr/image.png' },
                 { id: 'eff12', name: '주륵주륵', src: 'https://i.ibb.co/tw20dpKV/image.png' },
-                { id: 'eff13', name: '엉엉', src: 'https://i.ibb.co/FkscFd8F/image.png' },
-                { id: 'eff14', name: '음영전체', src: 'https://i.ibb.co/Dfzff3yM/image.png' },
-                { id: 'eff15', name: '음영대각선', src: 'https://i.ibb.co/tPFbMH6L/image.png' },
-                { id: 'eff16', name: '음영윗부분', src: 'https://i.ibb.co/TDybtRMW/image.png' }
+                { id: 'eff13', name: '엉엉', src: 'https://i.ibb.co/FkscFd8F/image.png' }
+            ],
+            shadow: [
+                { id: 'shd1', name: '음영전체', src: 'https://i.ibb.co/Dfzff3yM/image.png' },
+                { id: 'shd2', name: '음영대각선', src: 'https://i.ibb.co/tPFbMH6L/image.png' },
+                { id: 'shd3', name: '음영윗부분', src: 'https://i.ibb.co/TDybtRMW/image.png' }
             ]
         };
 
@@ -285,7 +349,9 @@
             brow: { id: 'brow1', flip: false, opacity: 1 },
             eye:  { id: 'eye1', flip: false, opacity: 1 },
             mouth: { id: 'mouth1', flip: false, opacity: 1 },
-            effect: { ids: [], flip: false, opacity: 0.5 }
+            shadow: { ids: [], flip: false, opacity: 1 },
+            // ★ 이제 효과는 선택된 항목마다 개별 설정(opacity, x, y, flip)을 저장합니다.
+            effect: { settings: {} } 
         };
 
         const loadedImages = {};
@@ -293,16 +359,15 @@
         let finalImageURL = ''; 
         const canvas = document.getElementById('faceCanvas');
         const ctx = canvas.getContext('2d');
-        const categoryNames = { brow: '눈썹', eye: '눈', mouth: '입', effect: '효과 및 음영' };
+        const categoryNames = { brow: '눈썹', eye: '눈', mouth: '입', effect: '효과 (개별 세부조정)', shadow: '음영' };
 
-        // 이미지 로드 (CORS 이슈 방지를 위해 crossOrigin 설정 추가)
         async function preloadImages() {
             const promises = [];
             for (const cat in components) {
                 components[cat].forEach(item => {
                     promises.push(new Promise(resolve => {
                         const img = new Image();
-                        img.crossOrigin = "anonymous"; // 외부 URL(ibb.co 등) 캔버스 오염 방지
+                        img.crossOrigin = "anonymous"; 
                         img.onload = () => { loadedImages[item.id] = img; resolve(); };
                         img.onerror = () => { console.warn(`이미지 실패: ${item.src}`); resolve(); }; 
                         img.src = item.src;
@@ -316,19 +381,63 @@
 
         function renderUI() {
             const container = document.getElementById('ui-container');
+            
+            // 스크롤 위치 임시 저장 (튕김 방지)
+            const scrollPosMap = [];
+            container.querySelectorAll('.scroll-area').forEach((el, index) => {
+                scrollPosMap[index] = el.scrollLeft;
+            });
+            
             container.innerHTML = ''; 
 
-            ['brow', 'eye', 'mouth', 'effect'].forEach(cat => {
+            ['brow', 'eye', 'mouth', 'shadow', 'effect'].forEach((cat, index) => {
                 const section = document.createElement('div');
                 section.className = 'category';
                 
-                let optionsHTML = `<label><input type="checkbox" onchange="toggleFlip('${cat}', this.checked)" ${state[cat].flip ? 'checked' : ''}> 좌우 반전</label>`;
+                let topControlsHTML = '';
+                let optionsHTML = '';
+
                 if (cat === 'effect') {
-                    optionsHTML += `<label style="margin-left: 10px;">투명도: <input type="range" min="0.1" max="1.0" step="0.1" value="${state.effect.opacity}" oninput="changeOpacity('${cat}', this.value)"></label>`;
+                    // 효과 카테고리는 선택된 항목별로 설정 패널을 렌더링합니다.
+                    const selectedIds = Object.keys(state.effect.settings);
+                    if (selectedIds.length > 0) {
+                        selectedIds.forEach(id => {
+                            const effItem = components.effect.find(e => e.id === id);
+                            if (!effItem) return;
+                            const s = state.effect.settings[id];
+                            
+                            optionsHTML += `
+                                <div style="background:#f8f9fa; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #e0e0e0; font-size: 0.85em;">
+                                    <div style="font-weight:bold; margin-bottom:10px; color:var(--primary-blue); display:flex; justify-content:space-between; align-items:center;">
+                                        <span>✨ ${effItem.name} 옵션</span>
+                                        <label style="font-weight:normal; cursor:pointer; color:var(--text-sub);"><input type="checkbox" onchange="changeEffectSetting('${id}', 'flip', this.checked)" ${s.flip ? 'checked' : ''}> 좌우 반전</label>
+                                    </div>
+                                    <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+                                        <label style="display:flex; align-items:center; gap:4px; font-weight:bold;">투명도: <input type="range" min="0.1" max="1.0" step="0.1" value="${s.opacity}" oninput="changeEffectSetting('${id}', 'opacity', this.value)"></label>
+                                        <label style="display:flex; align-items:center; gap:4px; font-weight:bold;">가로(↔): <input type="range" min="-100" max="100" step="2" value="${s.x}" oninput="changeEffectSetting('${id}', 'x', this.value)"></label>
+                                        <label style="display:flex; align-items:center; gap:4px; font-weight:bold;">세로(↕): <input type="range" min="-100" max="100" step="2" value="${s.y}" oninput="changeEffectSetting('${id}', 'y', this.value)"></label>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        // 선택된 효과가 없을 때 안내문구
+                        optionsHTML = `<div style="font-size:0.85em; color:var(--text-sub); margin-top:8px; padding: 10px; background: #f8f9fa; border-radius: 6px; border:1px dashed #ccc; text-align:center;">선택된 효과가 없습니다. 아래에서 효과를 선택해보세요!</div>`;
+                    }
+                } else {
+                    // 효과 외의 카테고리는 전체 적용 컨트롤 렌더링
+                    topControlsHTML = `<label><input type="checkbox" onchange="toggleFlip('${cat}', this.checked)" ${state[cat].flip ? 'checked' : ''}> 좌우 반전</label>`;
+                    if (cat === 'shadow') {
+                        optionsHTML += `<div class="options" style="background:#f0f4f8; padding:8px; border-radius:6px; margin-top:4px;"><label>투명도: <input type="range" min="0.1" max="1.0" step="0.1" value="${state[cat].opacity}" oninput="changeOpacity('${cat}', this.value)"></label></div>`;
+                    }
                 }
 
                 let itemsHTML = components[cat].map(item => {
-                    const isActive = cat === 'effect' ? state.effect.ids.includes(item.id) : state[cat].id === item.id;
+                    let isActive = false;
+                    if (cat === 'effect') isActive = !!state.effect.settings[item.id];
+                    else if (cat === 'shadow') isActive = state.shadow.ids.includes(item.id);
+                    else isActive = state[cat].id === item.id;
+
                     return `
                         <div class="item ${isActive ? 'active' : ''}" onclick="selectItem('${cat}', '${item.id}')" title="${item.name}">
                             <img src="${item.src}">
@@ -338,20 +447,37 @@
 
                 section.innerHTML = `
                     <div class="category-header">
-                        <div class="category-title">${categoryNames[cat]}</div>
-                        <div class="options">${optionsHTML}</div>
+                        <div class="header-top">
+                            <div class="category-title">${categoryNames[cat]}</div>
+                            <div class="options">${topControlsHTML}</div>
+                        </div>
+                        ${optionsHTML}
                     </div>
                     <div class="scroll-area">${itemsHTML}</div>
                 `;
                 container.appendChild(section);
             });
+
+            // 저장했던 스크롤 위치 복구 (튕김 방지용)
+            container.querySelectorAll('.scroll-area').forEach((el, index) => {
+                if (scrollPosMap[index] !== undefined) {
+                    el.scrollLeft = scrollPosMap[index];
+                }
+            });
         }
 
         function selectItem(category, id) {
             if (category === 'effect') {
-                const idx = state.effect.ids.indexOf(id);
-                if (idx > -1) state.effect.ids.splice(idx, 1);
-                else state.effect.ids.push(id);
+                if (state.effect.settings[id]) {
+                    delete state.effect.settings[id]; // 이미 있으면 선택 해제
+                } else {
+                    // 새로 선택되면 기본값(투명도 100%, 위치 0,0) 세팅
+                    state.effect.settings[id] = { opacity: 1, x: 0, y: 0, flip: false }; 
+                }
+            } else if (category === 'shadow') {
+                const idx = state.shadow.ids.indexOf(id);
+                if (idx > -1) state.shadow.ids.splice(idx, 1);
+                else state.shadow.ids.push(id);
             } else {
                 state[category].id = id;
             }
@@ -361,21 +487,52 @@
 
         function toggleFlip(category, isFlipped) { state[category].flip = isFlipped; drawFace(); }
         function changeOpacity(category, val) { state[category].opacity = parseFloat(val); drawFace(); }
+        
+        // ★ 효과 전용 개별 설정 변경 함수 (슬라이더 조작 시 renderUI는 생략하고 캔버스만 업데이트)
+        function changeEffectSetting(id, key, val) {
+            if (!state.effect.settings[id]) return;
+            
+            if (key === 'flip') {
+                state.effect.settings[id][key] = val;
+            } else {
+                state.effect.settings[id][key] = parseFloat(val);
+            }
+            drawFace();
+        }
 
         function drawFace() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 베이스 -> 음영 -> 효과 -> 입 -> 눈 -> 눈썹 순서로 그리기
             drawPart('base', state.base.id, state.base.flip, state.base.opacity);
-            state.effect.ids.forEach(id => drawPart('effect', id, state.effect.flip, state.effect.opacity));
+            
+            state.shadow.ids.forEach(id => drawPart('shadow', id, state.shadow.flip, state.shadow.opacity));
+            
+            // 선택된 효과(객체)들을 순회하며 개별 옵션값을 넘겨줌
+            Object.keys(state.effect.settings).forEach(id => {
+                const s = state.effect.settings[id];
+                drawPart('effect', id, s.flip, s.opacity, s.x, s.y);
+            });
+            
             drawPart('mouth', state.mouth.id, state.mouth.flip, state.mouth.opacity);
             drawPart('eye', state.eye.id, state.eye.flip, state.eye.opacity);
             drawPart('brow', state.brow.id, state.brow.flip, state.brow.opacity);
         }
 
-        function drawPart(category, id, flip, opacity) {
+        function drawPart(category, id, flip, opacity, offsetX = 0, offsetY = 0) {
             if (!id || !loadedImages[id]) return;
             ctx.save();
             ctx.globalAlpha = opacity;
-            if (flip) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+            
+            if (flip) {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                // 좌우 반전 시 위치(X축)도 반대로 이동되도록 보정
+                ctx.translate(-offsetX, offsetY); 
+            } else {
+                ctx.translate(offsetX, offsetY);
+            }
+            
             ctx.drawImage(loadedImages[id], 0, 0, canvas.width, canvas.height);
             ctx.restore();
         }
@@ -391,14 +548,39 @@
                 });
                 renderSavedList();
             } catch(e) {
-                alert("외부 이미지(ibb.co) 보안 설정 때문에 바로 저장이 안 될 수 있습니다. 다운로드 받은 후 로컬 파일로 바꿔서 사용해주세요!");
+                alert("외부 이미지(ibb.co) 보안 설정 때문에 바로 저장이 안 될 수 있습니다.");
             }
         }
 
         function loadFace(id) {
             const face = savedFaces.find(f => f.id === id);
             if (!face || !face.state) return alert("불러올 수 없습니다.");
-            Object.assign(state, JSON.parse(JSON.stringify(face.state)));
+            
+            // 깊은 복사로 가져오기
+            const loadedState = JSON.parse(JSON.stringify(face.state));
+            Object.assign(state, loadedState);
+            
+            // ★ 이전 버전(효과가 공통 설정이었던 시절) 백업 파일 호환성 보장 로직
+            if(!state.shadow) state.shadow = { ids: [], flip: false, opacity: 1 };
+            if(state.effect.ids && Array.isArray(state.effect.ids)) {
+                const newSettings = {};
+                state.effect.ids.forEach(effId => {
+                    newSettings[effId] = {
+                        flip: state.effect.flip || false,
+                        opacity: state.effect.opacity !== undefined ? state.effect.opacity : 1,
+                        x: state.effect.x || 0,
+                        y: state.effect.y || 0
+                    };
+                });
+                state.effect.settings = newSettings;
+                // 이전 형식 데이터 삭제
+                delete state.effect.ids;
+                delete state.effect.flip;
+                delete state.effect.opacity;
+                delete state.effect.x;
+                delete state.effect.y;
+            }
+
             renderUI();
             drawFace();
         }
@@ -424,13 +606,69 @@
             if (faceIndex > -1) savedFaces[faceIndex].name = newName;
         }
 
+        function toggleItemSelection(element, event) {
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
+            document.querySelectorAll('.saved-item').forEach(el => {
+                if(el !== element) el.classList.remove('selected');
+            });
+            element.classList.toggle('selected');
+        }
+
+        // 드래그 앤 드롭 함수 모음
+        let dragStartIndex = null;
+
+        function onDragStart(event, index) {
+            dragStartIndex = index;
+            event.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => { event.target.classList.add('dragging'); }, 0);
+        }
+        function onDragOver(event) {
+            event.preventDefault(); 
+            event.dataTransfer.dropEffect = 'move';
+        }
+        function onDragEnter(event) {
+            event.preventDefault();
+            const item = event.target.closest('.saved-item');
+            if(item) item.classList.add('drag-over');
+        }
+        function onDragLeave(event) {
+            const item = event.target.closest('.saved-item');
+            if(item) item.classList.remove('drag-over');
+        }
+        function onDrop(event, dropIndex) {
+            event.stopPropagation();
+            const item = event.target.closest('.saved-item');
+            if(item) item.classList.remove('drag-over');
+            
+            if (dragStartIndex !== null && dragStartIndex !== dropIndex) {
+                const draggedItem = savedFaces.splice(dragStartIndex, 1)[0];
+                savedFaces.splice(dropIndex, 0, draggedItem);
+                renderSavedList();
+            }
+            dragStartIndex = null;
+            return false;
+        }
+        function onDragEnd(event) {
+            event.target.classList.remove('dragging');
+            document.querySelectorAll('.saved-item').forEach(el => el.classList.remove('drag-over'));
+            dragStartIndex = null;
+        }
+
         function renderSavedList() {
             const listDiv = document.getElementById('saved-list');
-            listDiv.innerHTML = savedFaces.map(face => `
-                <div class="saved-item">
+            listDiv.innerHTML = savedFaces.map((face, index) => `
+                <div class="saved-item" 
+                     draggable="true" 
+                     ondragstart="onDragStart(event, ${index})"
+                     ondragover="onDragOver(event)"
+                     ondragenter="onDragEnter(event)"
+                     ondragleave="onDragLeave(event)"
+                     ondrop="onDrop(event, ${index})"
+                     ondragend="onDragEnd(event)"
+                     onclick="toggleItemSelection(this, event)">
                     <img src="${face.dataURL}">
                     <div class="saved-item-info">
-                        <input type="text" value="${face.name}" placeholder="이름 입력" onchange="updateName(${face.id}, this.value)">
+                        <input type="text" value="${face.name}" placeholder="이름" onchange="updateName(${face.id}, this.value)">
                         <div class="action-buttons">
                             <button class="action-btn edit-btn" onclick="loadFace(${face.id})">불러오기</button>
                             <button class="action-btn dup-btn" onclick="duplicateFace(${face.id})">복제</button>
