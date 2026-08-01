@@ -2,123 +2,220 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>표정 조합 메이커 Pro + 백업/미리보기</title>
+    <title>표정 조합 메이커 Pro (White & Blue)</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
+        /* 기본 스타일 설정 (하양 & 파랑 테마) */
+        :root {
+            --bg-color: #f0f4f8; /* 아주 밝은 파스텔 블루/그레이 배경 */
+            --panel-bg: #ffffff; /* 패널 배경 하양 */
+            --primary-blue: #1a73e8; /* 메인 파랑 */
+            --primary-hover: #1557b0;
+            --border-color: #dce1e6;
+            --text-main: #333333;
+            --text-sub: #5f6368;
+        }
+
+        body { 
+            font-family: 'Malgun Gothic', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            gap: 20px; 
+            height: 100vh; 
+            box-sizing: border-box; 
+        }
+
+        /* 패널 공통 스타일 */
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            padding: 20px;
+        }
+
+        /* 메인 영역 (좌측: 캔버스 + 리스트) */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        canvas {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fafafa;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+        }
+
+        /* 사이드바 영역 (우측: 도구 모음) */
+        .tools-sidebar {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
         
-        /* 왼쪽 패널: 선택 영역 */
-        .left-panel { flex: 1; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow-y: auto; }
-        
-        /* 오른쪽 패널: 미리보기 및 리스트 */
-        .right-panel { width: 380px; display: flex; flex-direction: column; gap: 15px; }
-        .preview-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; }
-        .saved-list-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px;
+        }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-outline {
+            background-color: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+        .btn-outline:hover { background-color: #f4f8fe; }
+
+        /* 카테고리UI 스타일 */
         .category { margin-bottom: 25px; }
-        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
-        .category-title { font-weight: bold; font-size: 1.1em; color: #333; }
+        .category-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 12px; border-bottom: 2px solid var(--bg-color); padding-bottom: 8px; 
+        }
+        .category-title { font-weight: bold; font-size: 1.1em; color: var(--primary-blue); }
         
-        /* 옵션 컨트롤 */
-        .options { display: flex; align-items: center; gap: 15px; font-size: 0.9em; color: #555; }
+        .options { display: flex; align-items: center; gap: 15px; font-size: 0.9em; color: var(--text-sub); }
         .options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .options input[type="range"] { width: 80px; }
-        
-        /* 가로 스크롤 영역 */
-        .scroll-area { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
-        .scroll-area::-webkit-scrollbar { height: 8px; }
-        .scroll-area::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        
-        /* 아이템 버튼 */
-        .item { width: 70px; height: 70px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background: #fafafa; transition: 0.2s; }
-        .item:hover { border-color: #bbb; }
-        .item.active { border-color: #4CAF50; background: #e8f5e9; }
+        .options input[type="range"] { width: 80px; accent-color: var(--primary-blue); }
+
+        .scroll-area { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .scroll-area::-webkit-scrollbar { height: 6px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: #c1c9d2; border-radius: 3px; }
+
+        .item { 
+            width: 65px; height: 65px; border: 2px solid var(--border-color); 
+            border-radius: 8px; cursor: pointer; flex-shrink: 0; 
+            display: flex; justify-content: center; align-items: center; 
+            background: #fff; transition: 0.2s; 
+        }
+        .item:hover { border-color: #aab4be; }
+        .item.active { border-color: var(--primary-blue); background: #f4f8fe; }
         .item img { max-width: 90%; max-height: 90%; pointer-events: none; }
 
-        canvas { border: 1px solid #ddd; border-radius: 8px; background: #fff; width: 100%; max-width: 300px; margin-bottom: 15px; }
+        /* 저장된 리스트 영역 */
+        .saved-list-container {
+            display: flex; flex-direction: column; flex: 1; min-height: 300px;
+        }
+        .saved-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+        }
+        .saved-header h3 { margin: 0; color: var(--primary-blue); }
+        .backup-controls { display: flex; gap: 8px; }
         
-        /* 버튼 스타일 */
-        .btn { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; }
-        .btn:hover { background: #45a049; }
-        .btn.primary { background: #4A90E2; margin-top: auto; }
-        .btn.primary:hover { background: #357ABD; }
-        .btn.secondary { background: #757575; font-size: 13px; padding: 8px; }
-        .btn.secondary:hover { background: #616161; }
+        .saved-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
-        /* 저장된 목록 아이템 */
-        .saved-item { display: flex; gap: 10px; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
-        .saved-item img { width: 60px; height: 60px; border: 1px solid #ddd; border-radius: 4px; background: #fff;}
+        .saved-item { 
+            display: flex; gap: 12px; align-items: center; 
+            background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); 
+        }
+        .saved-item img { width: 60px; height: 60px; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; object-fit: contain;}
         .saved-item-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .saved-item-info input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .saved-item-info input { 
+            padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline-color: var(--primary-blue);
+        }
         
-        .delete-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 6px; cursor: pointer; font-size: 12px; }
-        .delete-btn:hover { background: #e04343; }
+        .action-buttons { display: flex; gap: 6px; }
+        .action-btn { flex: 1; border: none; border-radius: 4px; padding: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .action-btn.edit-btn { background: #e3f2fd; color: #0d47a1; }
+        .action-btn.edit-btn:hover { background: #bbdefb; }
+        .action-btn.dup-btn { background: #f3e5f5; color: #4a148c; }
+        .action-btn.dup-btn:hover { background: #e1bee7; }
+        .action-btn.delete-btn { background: #ffebee; color: #b71c1c; }
+        .action-btn.delete-btn:hover { background: #ffcdd2; }
 
-        .backup-controls { display: flex; gap: 10px; margin-bottom: 10px; }
-
-        /* 미리보기 모달창 스타일 */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 25px; border-radius: 12px; max-width: 90%; max-height: 90%; overflow-y: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .modal-content img { max-width: 100%; border: 1px solid #ddd; margin-bottom: 20px; border-radius: 8px; }
+        /* 미리보기 모달창 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; max-width: 90%; max-height: 90%; overflow-y: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-content img { max-width: 100%; border: 1px solid var(--border-color); margin-bottom: 20px; border-radius: 8px; }
         .modal-buttons { display: flex; gap: 15px; justify-content: center; }
         .modal-buttons .btn { width: 150px; }
     </style>
 </head>
 <body>
-    <div class="left-panel" id="ui-container">
-        <!-- 카테고리 UI가 자바스크립트를 통해 이곳에 생성됨 -->
-    </div>
 
-    <div class="right-panel">
-        <div class="preview-box">
+    <!-- 메인 영역 (캔버스 및 저장 리스트) -->
+    <div class="main-area">
+        <div class="panel canvas-container">
             <canvas id="faceCanvas" width="400" height="400"></canvas>
-            <button class="btn" onclick="addToList()">+ 이 표정 추가하기</button>
+            <button class="btn btn-primary" onclick="addToList()">+ 이 표정 새로 추가하기</button>
         </div>
         
-        <div class="saved-list-box">
-            <h3 style="margin-top:0; margin-bottom: 5px; font-size: 1.1em;">추가된 표정들</h3>
-            
-            <!-- 백업 기능 버튼 -->
-            <div class="backup-controls">
-                <button class="btn secondary" onclick="exportBackup()">💾 백업 저장 (JSON)</button>
-                <button class="btn secondary" onclick="document.getElementById('file-upload').click()">📂 백업 불러오기</button>
-                <input type="file" id="file-upload" accept=".json" style="display:none;" onchange="importBackup(event)">
-            </div>
-
-            <div id="saved-list" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
-                <!-- 추가된 표정 목록이 들어갈 곳 -->
+        <div class="panel saved-list-container">
+            <div class="saved-header">
+                <h3>추가된 표정들</h3>
+                <div class="backup-controls">
+                    <button class="btn btn-outline" onclick="exportBackup()">💾 백업</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('file-upload').click()">📂 열기</button>
+                    <input type="file" id="file-upload" accept=".json" style="display:none;" onchange="importBackup(event)">
+                </div>
             </div>
             
-            <button class="btn primary" onclick="previewFinalImage()">최종 완성본 미리보기 (5열)</button>
+            <div id="saved-list" class="saved-list">
+                <!-- 리스트 출력 영역 -->
+            </div>
+            
+            <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 완성본 미리보기 (5열)</button>
         </div>
+    </div>
+
+    <!-- 우측 도구 패널 영역 -->
+    <div class="panel tools-sidebar" id="ui-container">
+        <!-- 자바스크립트로 렌더링됨 -->
     </div>
 
     <!-- 미리보기 모달창 -->
     <div class="modal-overlay" id="previewModal">
         <div class="modal-content">
-            <h2>최종 병합 이미지 미리보기</h2>
+            <h2 style="color: #1a73e8; margin-top:0;">최종 병합 이미지 미리보기</h2>
             <img id="finalPreviewImg" src="" alt="최종 이미지 미리보기">
             <div class="modal-buttons">
-                <button class="btn" style="background: #9e9e9e;" onclick="closeModal()">취소</button>
-                <button class="btn primary" onclick="downloadFromPreview()">이미지 다운로드</button>
+                <button class="btn" style="background: #e0e0e0; color: #333;" onclick="closeModal()">취소</button>
+                <button class="btn btn-primary" onclick="downloadFromPreview()">이미지 다운로드</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ★★★ 이미지 소스 설정 부분 ★★★
+        // ★ 요청하신 기본 캔버스 외부 이미지 경로 적용 완료 ★
         const components = {
             base: [
-                // 첨부해주신 "기본.png"를 기본 베이스로 설정했습니다.
-                { id: 'base1', name: '기본 얼굴', src: 'data:https://i.ibb.co/YB61NVfh/image.png' } 
+                { id: 'base1', name: '기본 얼굴', src: 'https://i.ibb.co/YB61NVfh/image.png' } 
             ],
             brow: [
-                // 아래처럼 눈썹 파일명들도 '기본눈썹.png', '화난눈썹.png' 등으로 바꿔주시면 됩니다!
                 { id: 'brow1', name: '기본 눈썹', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,130 Q 150,110 180,130 M 280,130 Q 250,110 220,130" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' },
                 { id: 'brow2', name: '화난 눈썹', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,110 L 180,140 M 280,110 L 220,140" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
             ],
             eye: [
                 { id: 'eye1', name: '기본 눈', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><circle cx="250" cy="180" r="15" fill="black"/></svg>' },
-                { id: 'eye2', name: '윙크 (비대칭)', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><path d="M 230,180 Q 250,160 270,180" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
+                { id: 'eye2', name: '윙크', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="150" cy="180" r="15" fill="black"/><path d="M 230,180 Q 250,160 270,180" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' }
             ],
             mouth: [
                 { id: 'mouth1', name: '웃는 입', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 170,250 Q 200,280 230,250" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>' },
@@ -126,8 +223,7 @@
             ],
             effect: [
                 { id: 'eff1', name: '홍조', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><ellipse cx="120" cy="210" rx="30" ry="15" fill="red"/><ellipse cx="280" cy="210" rx="30" ry="15" fill="red"/></svg>' },
-                { id: 'eff2', name: '음영', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,80 L 120,150 M 140,70 L 140,160 M 160,80 L 160,150" stroke="blue" stroke-width="4"/></svg>' },
-                { id: 'eff3', name: '땀방울', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 300,120 Q 310,140 300,160 Q 290,140 300,120" fill="cyan"/></svg>' }
+                { id: 'eff2', name: '음영', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M 120,80 L 120,150 M 140,70 L 140,160 M 160,80 L 160,150" stroke="blue" stroke-width="4"/></svg>' }
             ]
         };
 
@@ -141,20 +237,21 @@
 
         const loadedImages = {};
         let savedFaces = [];
-        let finalImageURL = ''; // 미리보기용 전역 변수
+        let finalImageURL = ''; 
         const canvas = document.getElementById('faceCanvas');
         const ctx = canvas.getContext('2d');
         const categoryNames = { brow: '눈썹', eye: '눈', mouth: '입', effect: '효과 및 음영' };
 
-        // 1. 이미지 미리 로드
+        // 이미지 로드 (CORS 이슈 방지를 위해 crossOrigin 설정 추가)
         async function preloadImages() {
             const promises = [];
             for (const cat in components) {
                 components[cat].forEach(item => {
                     promises.push(new Promise(resolve => {
                         const img = new Image();
+                        img.crossOrigin = "anonymous"; // 외부 URL(ibb.co 등) 캔버스 오염 방지
                         img.onload = () => { loadedImages[item.id] = img; resolve(); };
-                        img.onerror = () => { console.warn(`이미지를 불러올 수 없습니다: ${item.src}`); resolve(); }; // 오류 방지용
+                        img.onerror = () => { console.warn(`이미지 실패: ${item.src}`); resolve(); }; 
                         img.src = item.src;
                     }));
                 });
@@ -164,7 +261,6 @@
             drawFace();
         }
 
-        // 2. UI 동적 생성
         function renderUI() {
             const container = document.getElementById('ui-container');
             container.innerHTML = ''; 
@@ -173,7 +269,7 @@
                 const section = document.createElement('div');
                 section.className = 'category';
                 
-                let optionsHTML = `<label><input type="checkbox" onchange="toggleFlip('${cat}', this.checked)"> 좌우 반전</label>`;
+                let optionsHTML = `<label><input type="checkbox" onchange="toggleFlip('${cat}', this.checked)" ${state[cat].flip ? 'checked' : ''}> 좌우 반전</label>`;
                 if (cat === 'effect') {
                     optionsHTML += `<label style="margin-left: 10px;">투명도: <input type="range" min="0.1" max="1.0" step="0.1" value="${state.effect.opacity}" oninput="changeOpacity('${cat}', this.value)"></label>`;
                 }
@@ -213,7 +309,6 @@
         function toggleFlip(category, isFlipped) { state[category].flip = isFlipped; drawFace(); }
         function changeOpacity(category, val) { state[category].opacity = parseFloat(val); drawFace(); }
 
-        // 3. 캔버스 그리기
         function drawFace() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawPart('base', state.base.id, state.base.flip, state.base.opacity);
@@ -232,10 +327,37 @@
             ctx.restore();
         }
 
-        // 4. 리스트 추가/삭제/렌더링
         function addToList() {
-            const dataURL = canvas.toDataURL('image/png');
-            savedFaces.push({ id: Date.now(), dataURL: dataURL, name: `표정 ${savedFaces.length + 1}` });
+            try {
+                const dataURL = canvas.toDataURL('image/png');
+                savedFaces.push({ 
+                    id: Date.now(), 
+                    dataURL: dataURL, 
+                    name: `표정 ${savedFaces.length + 1}`,
+                    state: JSON.parse(JSON.stringify(state))
+                });
+                renderSavedList();
+            } catch(e) {
+                alert("외부 이미지(ibb.co) 보안 설정 때문에 바로 저장이 안 될 수 있습니다. 다운로드 받은 후 로컬 파일로 바꿔서 사용해주세요!");
+            }
+        }
+
+        function loadFace(id) {
+            const face = savedFaces.find(f => f.id === id);
+            if (!face || !face.state) return alert("불러올 수 없습니다.");
+            Object.assign(state, JSON.parse(JSON.stringify(face.state)));
+            renderUI();
+            drawFace();
+        }
+
+        function duplicateFace(id) {
+            const face = savedFaces.find(f => f.id === id);
+            if (!face) return;
+            savedFaces.push({
+                id: Date.now(), dataURL: face.dataURL,
+                name: face.name + ' (복제)',
+                state: face.state ? JSON.parse(JSON.stringify(face.state)) : null
+            });
             renderSavedList();
         }
 
@@ -256,22 +378,23 @@
                     <img src="${face.dataURL}">
                     <div class="saved-item-info">
                         <input type="text" value="${face.name}" placeholder="이름 입력" onchange="updateName(${face.id}, this.value)">
-                        <button class="delete-btn" onclick="deleteFromList(${face.id})">삭제</button>
+                        <div class="action-buttons">
+                            <button class="action-btn edit-btn" onclick="loadFace(${face.id})">불러오기</button>
+                            <button class="action-btn dup-btn" onclick="duplicateFace(${face.id})">복제</button>
+                            <button class="action-btn delete-btn" onclick="deleteFromList(${face.id})">삭제</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 5. 백업 기능 (JSON Export / Import)
         function exportBackup() {
             if (savedFaces.length === 0) return alert("백업할 표정이 없습니다.");
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedFaces));
             const link = document.createElement('a');
             link.setAttribute("href", dataStr);
             link.setAttribute("download", "표정_백업.json");
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            document.body.appendChild(link); link.click(); link.remove();
         }
 
         function importBackup(event) {
@@ -280,59 +403,37 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (Array.isArray(importedData)) {
-                        savedFaces = importedData;
-                        renderSavedList();
-                        alert('백업 데이터를 성공적으로 불러왔습니다!');
-                    } else { throw new Error('Invalid format'); }
-                } catch (err) { alert('잘못된 백업 파일입니다.'); }
-                event.target.value = ''; // 파일 인풋 초기화
+                    savedFaces = JSON.parse(e.target.result);
+                    renderSavedList();
+                } catch (err) { alert('잘못된 파일입니다.'); }
+                event.target.value = ''; 
             };
             reader.readAsText(file);
         }
 
-        // 6. 최종 이미지 미리보기 및 다운로드
         function previewFinalImage() {
             if (savedFaces.length === 0) return alert("추가된 표정이 없습니다.");
-
             const itemsPerRow = 5; 
             const cols = Math.min(savedFaces.length, itemsPerRow);
             const rows = Math.ceil(savedFaces.length / itemsPerRow);
-
-            const margin = 20;
-            const faceSize = 300; 
-            const textHeight = 50;
-            
-            const cellWidth = faceSize + margin * 2;
-            const cellHeight = faceSize + textHeight + margin * 2;
+            const margin = 20, faceSize = 300, textHeight = 50;
+            const cellWidth = faceSize + margin * 2, cellHeight = faceSize + textHeight + margin * 2;
 
             const offCanvas = document.createElement('canvas');
-            offCanvas.width = cols * cellWidth;
-            offCanvas.height = rows * cellHeight;
+            offCanvas.width = cols * cellWidth; offCanvas.height = rows * cellHeight;
             const oCtx = offCanvas.getContext('2d');
-
-            oCtx.fillStyle = '#ffffff';
-            oCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
+            oCtx.fillStyle = '#ffffff'; oCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
 
             let drawnCount = 0;
-
             savedFaces.forEach((face, index) => {
-                const col = index % itemsPerRow;
-                const row = Math.floor(index / itemsPerRow);
-                const x = col * cellWidth + margin;
-                const y = row * cellHeight + margin;
-
+                const col = index % itemsPerRow, row = Math.floor(index / itemsPerRow);
+                const x = col * cellWidth + margin, y = row * cellHeight + margin;
                 const img = new Image();
                 img.src = face.dataURL;
                 img.onload = () => {
                     oCtx.drawImage(img, x, y, faceSize, faceSize);
-                    
-                    oCtx.fillStyle = '#000000';
-                    oCtx.font = 'bold 24px "Malgun Gothic"';
-                    oCtx.textAlign = 'center';
+                    oCtx.fillStyle = '#333333'; oCtx.font = 'bold 24px "Malgun Gothic"'; oCtx.textAlign = 'center';
                     oCtx.fillText(face.name, x + faceSize / 2, y + faceSize + 35);
-                    
                     drawnCount++;
                     if (drawnCount === savedFaces.length) {
                         finalImageURL = offCanvas.toDataURL('image/png');
@@ -343,16 +444,10 @@
             });
         }
 
-        function closeModal() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
-
+        function closeModal() { document.getElementById('previewModal').style.display = 'none'; }
         function downloadFromPreview() {
-            const link = document.createElement('a');
-            link.download = '표정_모음집.png';
-            link.href = finalImageURL;
-            link.click();
-            closeModal();
+            const link = document.createElement('a'); link.download = '표정_모음집.png'; link.href = finalImageURL;
+            link.click(); closeModal();
         }
 
         preloadImages();
