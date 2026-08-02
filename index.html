@@ -720,11 +720,11 @@
                 const rows = Math.ceil(savedFaces.length / itemsPerRow) || 1;
 
                 // 첨부 참고 이미지를 실측하여 얻은 값 (원 지름/여백/간격 비율을 그대로 반영)
-                const faceSize = 124;   // 얼굴 원 크기
-                const hGap = 18;        // 표정 사이 가로 여백 (같은 줄 안에서는 촘촘하게)
-                const vGap = 39;        // 표정 사이 세로 여백(행 간격, 이름 아래 여유 공간)
-                const sideMargin = 91;  // 캔버스 좌우 여백 (참고 이미지 기준)
-                const labelGap = 13;    // 얼굴과 이름 사이 여백
+                const faceSize = 150;   // 얼굴 원 크기
+                const hGap = 0;        // 표정 사이 가로 여백 (같은 줄 안에서는 촘촘하게)
+                const vGap = 20;        // 표정 사이 세로 여백(행 간격, 이름 아래 여유 공간)
+                const sideMargin = 30;  // 캔버스 좌우 여백
+                const labelGap = 0;    // 얼굴과 이름 사이 여백
                 const textHeight = 14;  // 이름 텍스트 영역
 
                 const cellWidth = faceSize + hGap;
