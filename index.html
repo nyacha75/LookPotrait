@@ -28,13 +28,20 @@
             box-sizing: border-box; 
         }
 
-        /* 최상단 페이지 제목 */
+        /* 최상단 페이지 제목을 감싸는 흰색 박스 */
+        .title-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
         .page-title {
             margin: 0;
             font-size: 26px;
             color: var(--primary-blue);
             font-weight: bold;
-            padding-left: 5px;
+            text-align: center;
         }
 
         /* 메인 레이아웃 컨테이너 */
@@ -143,6 +150,9 @@
         .item.active { border-color: var(--primary-blue); background: #f4f8fe; }
         .item img { max-width: 90%; max-height: 90%; pointer-events: none; }
 
+        /* 효과 옵션 영역 (선택창 아래로 배치) */
+        .effect-options { margin-top: 12px; }
+
         /* 저장된 리스트 영역 (5열 그리드) */
         .saved-list-container {
             display: flex; flex-direction: column; flex: 1; min-height: 200px;
@@ -219,8 +229,10 @@
 </head>
 <body>
 
-    <!-- 최상단 제목 -->
-    <h1 class="page-title">표정 모음집 만들기</h1>
+    <!-- 최상단 제목 (흰색 박스 안에 중앙 정렬) -->
+    <div class="panel title-panel">
+        <h1 class="page-title">표정 모음집 만들기</h1>
+    </div>
 
     <!-- 뼈대가 되는 가로 레이아웃 -->
     <div class="layout-container">
@@ -251,7 +263,7 @@
                     <!-- 리스트 출력 영역 -->
                 </div>
                 
-                <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 완성본 미리보기 (5열)</button>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 완성본 미리보기 (A5, 5열)</button>
             </div>
         </div>
         
@@ -450,15 +462,16 @@
                     `;
                 }).join('');
 
+                // ★ 선택창(scroll-area)을 위로, 옵션(optionsHTML)을 아래로 배치
                 section.innerHTML = `
                     <div class="category-header">
                         <div class="header-top">
                             <div class="category-title">${categoryNames[cat]}</div>
                             <div class="options">${topControlsHTML}</div>
                         </div>
-                        ${optionsHTML}
                     </div>
                     <div class="scroll-area">${itemsHTML}</div>
+                    <div class="effect-options">${optionsHTML}</div>
                 `;
                 container.appendChild(section);
             });
@@ -704,16 +717,33 @@
             reader.readAsText(file);
         }
 
+        // ★ 완성본을 A5 규격(148mm x 210mm)에 맞춰 생성. 표정 간격을 줄이고,
+        //   내용이 A5 세로 길이를 초과하면 캔버스가 세로로 더 길어지도록 처리.
         function previewFinalImage() {
             if (savedFaces.length === 0) return alert("추가된 표정이 없습니다.");
-            const itemsPerRow = 5; 
+
+            const DPI = 150; // 인쇄 품질을 고려한 해상도
+            const mmToPx = mm => Math.round(mm * DPI / 25.4);
+            const a5Width = mmToPx(148);   // ≈ 874px
+            const a5Height = mmToPx(210);  // ≈ 1240px
+
+            const itemsPerRow = 5;
             const cols = Math.min(savedFaces.length, itemsPerRow);
             const rows = Math.ceil(savedFaces.length / itemsPerRow);
-            const margin = 20, faceSize = 300, textHeight = 50;
-            const cellWidth = faceSize + margin * 2, cellHeight = faceSize + textHeight + margin * 2;
+
+            const margin = 8;      // 표정 사이 간격 축소
+            const textHeight = 26; // 이름 표시 영역도 축소
+            const cellWidth = a5Width / cols;
+            const faceSize = cellWidth - margin * 2;
+            const cellHeight = faceSize + textHeight + margin * 2;
+
+            const neededHeight = rows * cellHeight;
+            // A5 세로 길이를 초과하면 세로로 늘어나도록 처리 (가로 폭은 A5로 고정)
+            const finalHeight = Math.max(a5Height, neededHeight);
 
             const offCanvas = document.createElement('canvas');
-            offCanvas.width = cols * cellWidth; offCanvas.height = rows * cellHeight;
+            offCanvas.width = a5Width;
+            offCanvas.height = finalHeight;
             const oCtx = offCanvas.getContext('2d');
             oCtx.fillStyle = '#ffffff'; oCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
 
@@ -725,8 +755,10 @@
                 img.src = face.dataURL;
                 img.onload = () => {
                     oCtx.drawImage(img, x, y, faceSize, faceSize);
-                    oCtx.fillStyle = '#333333'; oCtx.font = 'bold 24px "Malgun Gothic"'; oCtx.textAlign = 'center';
-                    oCtx.fillText(face.name, x + faceSize / 2, y + faceSize + 35);
+                    oCtx.fillStyle = '#333333';
+                    oCtx.font = `bold ${Math.max(12, Math.round(faceSize * 0.09))}px "Malgun Gothic"`;
+                    oCtx.textAlign = 'center';
+                    oCtx.fillText(face.name, x + faceSize / 2, y + faceSize + textHeight - 6);
                     drawnCount++;
                     if (drawnCount === savedFaces.length) {
                         finalImageURL = offCanvas.toDataURL('image/png');
