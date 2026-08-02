@@ -132,15 +132,22 @@
         .scroll-area::-webkit-scrollbar { height: 6px; }
         .scroll-area::-webkit-scrollbar-thumb { background: #c1c9d2; border-radius: 3px; }
 
+        /* 눈/입처럼 항목이 많은 카테고리를 2줄로 보여주기 위한 스타일 */
+        .scroll-area.two-row {
+            flex-flow: column wrap;
+            height: 140px;
+            align-content: flex-start;
+        }
+
         .item { 
             width: 65px; height: 65px; border: 2px solid var(--border-color); 
             border-radius: 8px; cursor: pointer; flex-shrink: 0; 
             display: flex; justify-content: center; align-items: center; 
-            background: #fff; transition: 0.2s; 
+            background: #fff; transition: 0.2s; overflow: hidden;
         }
         .item:hover { border-color: #aab4be; }
         .item.active { border-color: var(--primary-blue); background: #f4f8fe; }
-        .item img { max-width: 90%; max-height: 90%; pointer-events: none; }
+        .item img { max-width: none; width: 100%; height: 100%; object-fit: contain; transform: scale(1.8); pointer-events: none; }
 
         .effect-options { margin-top: 12px; }
 
@@ -206,8 +213,14 @@
         .action-btn.delete-btn:hover { background: #ffcdd2; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 25px; border-radius: 12px; max-width: 90%; max-height: 90%; overflow-y: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .modal-content img { max-width: 100%; border: 1px solid var(--border-color); margin-bottom: 20px; border-radius: 8px; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; max-width: 90vw; max-height: 90vh; overflow-y: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+        .modal-content img { max-width: 100%; max-height: 55vh; object-fit: contain; border: 1px solid var(--border-color); margin-bottom: 12px; border-radius: 8px; }
+        .modal-close-btn {
+            position: absolute; top: 12px; right: 12px; width: 30px; height: 30px;
+            border: none; border-radius: 50%; background: #f0f4f8; color: var(--text-sub);
+            font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close-btn:hover { background: #e0e6ec; color: var(--text-main); }
         .modal-buttons { display: flex; gap: 15px; justify-content: center; }
         .modal-buttons .btn { width: 150px; }
         .modal-option {
@@ -253,13 +266,14 @@
     </div>
 
     <div class="modal-overlay" id="previewModal">
-        <div class="modal-content">
+        <div class="modal-content" style="position: relative;">
+            <button class="modal-close-btn" onclick="closeModal()" aria-label="닫기">✕</button>
             <h2 style="color: #1a73e8; margin-top:0;">최종 이미지 미리보기</h2>
+            <img id="finalPreviewImg" src="" alt="최종 이미지 미리보기">
             <label class="modal-option">
-                <input type="checkbox" id="compactSizeCheckbox" onchange="onCompactToggle(this.checked)">
+                <input type="checkbox" id="compactSizeCheckbox" checked onchange="onCompactToggle(this.checked)">
                 표정 개수에 맞춰 캔버스 크기 줄이기
             </label>
-            <img id="finalPreviewImg" src="" alt="최종 이미지 미리보기">
             <div class="modal-buttons">
                 <button class="btn" style="background: #e0e0e0; color: #333;" onclick="closeModal()">취소</button>
                 <button class="btn btn-primary" onclick="downloadFromPreview()">이미지 다운로드</button>
@@ -461,7 +475,7 @@
                             <div class="options">${topControlsHTML}</div>
                         </div>
                     </div>
-                    <div class="scroll-area">${itemsHTML}</div>
+                    <div class="scroll-area${(cat === 'eye' || cat === 'mouth') ? ' two-row' : ''}">${itemsHTML}</div>
                     <div class="effect-options">${optionsHTML}</div>
                 `;
                 container.appendChild(section);
@@ -682,12 +696,17 @@
             `).join('');
         }
 
+        const DEFAULT_FILE_NAME = 'ssorang_potrait';
+
         function exportBackup() {
             if (savedFaces.length === 0) return alert("백업할 표정이 없습니다.");
+            const inputName = prompt("백업 파일 이름을 입력하세요.", DEFAULT_FILE_NAME);
+            if (inputName === null) return; // 사용자가 취소함
+            const fileName = (inputName.trim() || DEFAULT_FILE_NAME) + '.json';
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedFaces));
             const link = document.createElement('a');
             link.setAttribute("href", dataStr);
-            link.setAttribute("download", "표정_백업.json");
+            link.setAttribute("download", fileName);
             document.body.appendChild(link); link.click(); link.remove();
         }
 
@@ -772,8 +791,8 @@
 
         async function previewFinalImage() {
             if (savedFaces.length === 0) return alert("추가된 표정이 없습니다.");
-            document.getElementById('compactSizeCheckbox').checked = false;
-            finalImageURL = await buildFinalCanvas(false);
+            document.getElementById('compactSizeCheckbox').checked = true;
+            finalImageURL = await buildFinalCanvas(true);
             document.getElementById('finalPreviewImg').src = finalImageURL;
             document.getElementById('previewModal').style.display = 'flex';
         }
@@ -785,7 +804,10 @@
 
         function closeModal() { document.getElementById('previewModal').style.display = 'none'; }
         function downloadFromPreview() {
-            const link = document.createElement('a'); link.download = '표정_모음집.png'; link.href = finalImageURL;
+            const inputName = prompt("이미지 파일 이름을 입력하세요.", DEFAULT_FILE_NAME);
+            if (inputName === null) return; // 사용자가 취소함
+            const fileName = (inputName.trim() || DEFAULT_FILE_NAME) + '.png';
+            const link = document.createElement('a'); link.download = fileName; link.href = finalImageURL;
             link.click(); closeModal();
         }
 
