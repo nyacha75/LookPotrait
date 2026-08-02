@@ -733,7 +733,7 @@
                 const contentWidth = cols * faceSize + (cols - 1) * hGap + sideMargin * 2;
                 const contentHeight = rows * (faceSize + labelGap + textHeight) + (rows - 1) * vGap + sideMargin * 2;
 
-                const canvasWidth = compact ? contentWidth : a5Width;
+                const canvasWidth = contentWidth;
                 const canvasHeight = compact ? contentHeight : Math.max(a5Height, contentHeight);
 
                 const offCanvas = document.createElement('canvas');
