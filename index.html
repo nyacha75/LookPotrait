@@ -246,12 +246,12 @@
         <div class="main-area">
             <div class="panel canvas-container">
                 <canvas id="faceCanvas" width="400" height="400"></canvas>
-                <button class="btn btn-primary" onclick="addToList()">+ 이 표정 새로 추가하기</button>
+                <button class="btn btn-primary" onclick="addToList()">표정 추가</button>
             </div>
             
             <div class="panel saved-list-container">
                 <div class="saved-header">
-                    <h3>추가된 표정들</h3>
+                    <h3>표정 모음집</h3>
                     <div class="backup-controls">
                         <button class="btn btn-outline" onclick="exportBackup()">💾 백업</button>
                         <button class="btn btn-outline" onclick="document.getElementById('file-upload').click()">📂 열기</button>
@@ -263,7 +263,7 @@
                     <!-- 리스트 출력 영역 -->
                 </div>
                 
-                <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 완성본 미리보기 (A5, 5열)</button>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="previewFinalImage()">최종 이미지 미리보기</button>
             </div>
         </div>
         
@@ -272,7 +272,7 @@
     <!-- 미리보기 모달창 -->
     <div class="modal-overlay" id="previewModal">
         <div class="modal-content">
-            <h2 style="color: #1a73e8; margin-top:0;">최종 병합 이미지 미리보기</h2>
+            <h2 style="color: #1a73e8; margin-top:0;">최종 이미지 미리보기</h2>
             <img id="finalPreviewImg" src="" alt="최종 이미지 미리보기">
             <div class="modal-buttons">
                 <button class="btn" style="background: #e0e0e0; color: #333;" onclick="closeModal()">취소</button>
@@ -296,19 +296,27 @@
                 { id: 'brow7', name: '짜증', src: 'https://i.ibb.co/JWCqpf70/image.png' },
             ],
             eye: [
-                { id: 'eye1', name: '기본', src: 'https://i.ibb.co/nMPwG986/image.png' },
-                { id: 'eye2', name: '옆눈', src: 'https://i.ibb.co/xqRbbB8v/image.png' },
-                { id: 'eye3', name: '올려다보기', src: 'https://i.ibb.co/gbBksdRq/image.png' },
-                { id: 'eye4', name: '내려다보기', src: 'https://i.ibb.co/FL6sMYxP/image.png' },
-                { id: 'eye5', name: '놀람', src: 'https://i.ibb.co/bMfFJ7zx/image.png' },
-                { id: 'eye6', name: 'ㅍㅍ', src: 'https://i.ibb.co/1fVm1Lrk/image.png' },
-                { id: 'eye7', name: '가늘게', src: 'https://i.ibb.co/Gvn5gRK4/image.png' },
-                { id: 'eye8', name: '접어서웃기', src: 'https://i.ibb.co/5gy5gfnr/image.png' },
-                { id: 'eye9', name: '감기', src: 'https://i.ibb.co/MD9qP6ns/image.png' },
-                { id: 'eye10', name: '웃음', src: 'https://i.ibb.co/23K6P9BM/image.png' },
-                { id: 'eye11', name: '꺄아', src: 'https://i.ibb.co/RkBYncnP/image.png' },
-                { id: 'eye12', name: '콩눈', src: 'https://i.ibb.co/n87Fv1Sb/image.png' },
-                { id: 'eye13', name: '텅빈콩눈', src: 'https://i.ibb.co/Mx3gwCzr/image.png' }
+                { id: 'eye1', name: '기본_안광', src: 'https://i.ibb.co/spqmT66W/export202608020328091150.png' },
+                { id: 'eye2', name: '기본', src: 'https://i.ibb.co/nMPwG986/image.png' },
+                { id: 'eye3', name: '옆눈_안광', src: 'https://i.ibb.co/QF8dNbMW/export202608020328046500.png' },
+                { id: 'eye4', name: '옆눈', src: 'https://i.ibb.co/xqRbbB8v/image.png' },
+                { id: 'eye5', name: '올려다보기_안광', src: 'https://i.ibb.co/xSZ9G88h/export202608020327598390.png' },
+                { id: 'eye6', name: '올려다보기', src: 'https://i.ibb.co/gbBksdRq/image.png' },
+                { id: 'eye7', name: '내려다보기_안광', src: 'https://i.ibb.co/hJ2CrTHF/export202608020327556090.png' },
+                { id: 'eye8', name: '내려다보기', src: 'https://i.ibb.co/FL6sMYxP/image.png' },
+                { id: 'eye9', name: '놀람_안광', src: 'https://i.ibb.co/hxcKgj0Q/export202608020327516110.png' },
+                { id: 'eye10', name: '놀람', src: 'https://i.ibb.co/bMfFJ7zx/image.png' },
+                { id: 'eye11', name: 'ㅍㅍ_안광', src: 'https://i.ibb.co/pBv9Wthm/export202608020327467980.png' },
+                { id: 'eye12', name: 'ㅍㅍ', src: 'https://i.ibb.co/1fVm1Lrk/image.png' },
+                { id: 'eye13', name: '가늘게_안광', src: 'https://i.ibb.co/Rq44RZ2/export202608020327419550.png' },
+                { id: 'eye14', name: '가늘게', src: 'https://i.ibb.co/Gvn5gRK4/image.png' },
+                { id: 'eye15', name: '접어서웃기', src: 'https://i.ibb.co/5gy5gfnr/image.png' },
+                { id: 'eye16', name: '감기', src: 'https://i.ibb.co/MD9qP6ns/image.png' },
+                { id: 'eye17', name: '웃음', src: 'https://i.ibb.co/23K6P9BM/image.png' },
+                { id: 'eye18', name: '꺄아', src: 'https://i.ibb.co/RkBYncnP/image.png' },
+                { id: 'eye19', name: '콩눈_안광', src: 'https://i.ibb.co/Q300PBCT/export202608020327368580.png' },
+                { id: 'eye20', name: '콩눈', src: 'https://i.ibb.co/n87Fv1Sb/image.png' },
+                { id: 'eye21', name: '텅빈콩눈', src: 'https://i.ibb.co/Mx3gwCzr/image.png' }
             ],
             mouth: [
                 { id: 'mouth1', name: '미소', src: 'https://i.ibb.co/4xvQ8t5/image.png' },
