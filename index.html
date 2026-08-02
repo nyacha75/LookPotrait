@@ -719,13 +719,13 @@
                 const cols = Math.min(savedFaces.length, itemsPerRow) || 1;
                 const rows = Math.ceil(savedFaces.length / itemsPerRow) || 1;
 
-                // 참고 이미지 비율에 맞춘 고정 크기 값 (표정 개수와 무관하게 일정한 크기 유지)
-                const faceSize = 150;   // 얼굴 원 크기
-                const hGap = 22;        // 표정 사이 가로 여백
-                const vGap = 34;        // 표정 사이 세로 여백(행 간격)
-                const sideMargin = 26;  // 캔버스 상하좌우 여백
-                const labelGap = 8;     // 얼굴과 이름 사이 여백
-                const textHeight = 20;  // 이름 텍스트 영역
+                // 첨부 참고 이미지를 실측하여 얻은 값 (원 지름/여백/간격 비율을 그대로 반영)
+                const faceSize = 124;   // 얼굴 원 크기
+                const hGap = 18;        // 표정 사이 가로 여백 (같은 줄 안에서는 촘촘하게)
+                const vGap = 39;        // 표정 사이 세로 여백(행 간격, 이름 아래 여유 공간)
+                const sideMargin = 91;  // 캔버스 좌우 여백 (참고 이미지 기준)
+                const labelGap = 13;    // 얼굴과 이름 사이 여백
+                const textHeight = 14;  // 이름 텍스트 영역
 
                 const cellWidth = faceSize + hGap;
                 const cellHeight = faceSize + labelGap + textHeight + vGap;
