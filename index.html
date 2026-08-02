@@ -24,7 +24,7 @@
             display: flex; 
             flex-direction: column;
             gap: 15px; 
-            height: 100vh; 
+            min-height: 100vh; 
             box-sizing: border-box; 
         }
 
@@ -56,7 +56,7 @@
             display: flex;
             gap: 20px;
             flex: 1;
-            min-height: 0; 
+            align-items: flex-start;
         }
 
         .panel {
@@ -69,7 +69,6 @@
 
         .tools-sidebar {
             flex: 1;
-            overflow-y: auto;
         }
 
         .main-area {
@@ -142,7 +141,7 @@
         .scroll-area::-webkit-scrollbar { height: 6px; }
         .scroll-area::-webkit-scrollbar-thumb { background: #c1c9d2; border-radius: 3px; }
 
-        /* 눈/입처럼 항목이 많은 카테고리를 2줄로 보여주기 위한 스타일 (grid로 확실하게 2행 고정) */
+        /* 눈/입/효과처럼 항목이 많은 카테고리를 2줄로 보여주기 위한 스타일 (grid로 확실하게 2행 고정) */
         .scroll-area.two-row {
             display: grid;
             grid-template-rows: repeat(2, 65px);
@@ -502,6 +501,7 @@
                     `;
                 }).join('');
 
+                const isTwoRow = (cat === 'eye' || cat === 'mouth' || cat === 'effect');
                 section.innerHTML = `
                     <div class="category-header">
                         <div class="header-top">
@@ -509,7 +509,7 @@
                             <div class="options">${topControlsHTML}</div>
                         </div>
                     </div>
-                    <div class="scroll-area${(cat === 'eye' || cat === 'mouth') ? ' two-row' : ''}">${itemsHTML}</div>
+                    <div class="scroll-area${isTwoRow ? ' two-row' : ''}">${itemsHTML}</div>
                     <div class="effect-options">${optionsHTML}</div>
                 `;
                 container.appendChild(section);
