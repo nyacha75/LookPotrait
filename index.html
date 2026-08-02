@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>[쏘랑] 표정 모음집 메이커</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🙂</text></svg>">
+    <link rel="icon" href="icon.png">
     <style>
         :root {
             --bg-color: #f0f4f8; 
@@ -394,7 +394,7 @@
         let finalImageURL = ''; 
         const canvas = document.getElementById('faceCanvas');
         const ctx = canvas.getContext('2d');
-        const categoryNames = { brow: '눈썹', eye: '눈', mouth: '입', effect: '효과 (개별 세부조정)', shadow: '음영' };
+        const categoryNames = { brow: '눈썹', eye: '눈', mouth: '입', effect: '효과', shadow: '음영' };
 
         async function preloadImages() {
             const promises = [];
